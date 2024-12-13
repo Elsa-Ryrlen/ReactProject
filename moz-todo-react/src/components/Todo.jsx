@@ -1,7 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+
 
 function Todo(props) {
+
   return (
     <li className="todo stack-small" style={cardStyle}>
       <div style={inputContainerStyle}>
@@ -11,7 +14,7 @@ function Todo(props) {
       <div className="btn-group" style={buttonGroupStyle}>
         <Link to={`/game/${props.id}`}>
           <button type="button" className="btn btn-info" style={buttonStyle}>
-            Choose
+            Choose 
           </button>
         </Link>
         <button 

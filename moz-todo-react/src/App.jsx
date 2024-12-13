@@ -1,6 +1,5 @@
 import { useState } from "react";
 import Form from "./components/Form";
-import FilterButton from "./components/FilterButton";
 import Todo from "./components/Todo";
 import GamePage from "./components/GamePage"; 
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
@@ -61,22 +60,33 @@ function App({ tasks, owners }) {
 
   return (
     <Router>
-      <div className="todoapp stack-large">
-        <h1>Game Festival</h1>
-        <Form onSubmit={addGame} />
-        <div className="filters btn-group stack-exception">
-          <FilterButton />
-          <FilterButton />
-        </div>
-        <h2 id="list-heading">{games.length} games available</h2>
-        <ul
-          role="list"
-          className="todo-list stack-large stack-exception"
-          aria-labelledby="list-heading">
-          {taskList}
-        </ul>
-      </div>
       <Routes>
+      <Route
+          path="/"
+          element={
+            <div className="todoapp stack-large">
+              <h1>Game Festival</h1>
+              <Form onSubmit={addGame} />
+              <h2 id="list-heading">{games.length} games available</h2>
+              <ul
+                role="list"
+                className="todo-list stack-large stack-exception"
+                aria-labelledby="list-heading">
+                {games.map((game) => (
+                  <Todo
+                    id={game.id}
+                    name={game.name}
+                    price={game.price}
+                    completed={game.completed}
+                    key={game.id}
+                    ownerName={getOwnerName(game.ownerId)}
+                    handleDelete={handleDelete}
+                  />
+                ))}
+              </ul>
+            </div>
+          }
+        />
         <Route
           path="/game/:gameId"
           element={
