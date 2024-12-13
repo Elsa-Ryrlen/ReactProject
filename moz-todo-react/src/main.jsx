@@ -7,7 +7,7 @@ const DATA = [
   { id: "1", name: "Uno", price: 23, ownerId: 1 },
   { id: "2", name: "Cards", price: 10, ownerId: 2 },
   { id: "3", name: "Monopoly", price: 30, ownerId: 3 },
-  { id: "4", name: "plockepin", price: 3, ownerId: 1}
+  { id: "4", name: "Plockepin", price: 3, ownerId: 1}
 ];
 
 const OWNERS = [

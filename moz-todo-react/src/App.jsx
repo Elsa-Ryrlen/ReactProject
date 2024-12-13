@@ -5,12 +5,16 @@ import Todo from "./components/Todo";
 import GamePage from "./components/GamePage"; 
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
+
 function App({ tasks, owners }) {
   const [games, setGames] = useState(tasks);
+  const [gameOwners, setGameOwners] = useState(owners);
+
 
   // Function to add a new game to the list
   function addGame(newGame) {
     setGames((prevGames) => [...prevGames, newGame]);
+    
   }
 
   // Function to delete a game by ID
@@ -20,8 +24,26 @@ function App({ tasks, owners }) {
 
   // Function to get the owner name based on ownerId
   function getOwnerName(ownerId) {
-    const owner = owners.find((o) => o.id === ownerId);
+    const owner = gameOwners.find((o) => o.id === ownerId);
     return owner ? owner.name : "Unknown";
+  }
+
+  // Function to update game ownership
+  function updateGameOwner(gameId, newOwnerId) {
+    setGames((prevGames) =>
+      prevGames.map((game) =>
+        game.id === gameId ? { ...game, ownerId: newOwnerId } : game
+      )
+    );
+
+    // Add the new owner to the owners list if not already present
+    setGameOwners((prevOwners) => {
+      const ownerExists = prevOwners.some((owner) => owner.id === newOwnerId);
+      if (!ownerExists) {
+        return [...prevOwners, { id: newOwnerId }];
+      }
+      return prevOwners;
+    });
   }
 
   // Map through games to create the list
@@ -40,7 +62,7 @@ function App({ tasks, owners }) {
   return (
     <Router>
       <div className="todoapp stack-large">
-        <h1> Game Festival</h1>
+        <h1>Game Festival</h1>
         <Form onSubmit={addGame} />
         <div className="filters btn-group stack-exception">
           <FilterButton />
@@ -55,7 +77,16 @@ function App({ tasks, owners }) {
         </ul>
       </div>
       <Routes>
-        <Route path="/game/:gameId" element={<GamePage tasks={games} owners={owners} />} />
+        <Route
+          path="/game/:gameId"
+          element={
+            <GamePage
+              tasks={games}
+              owners={gameOwners}
+              updateGameOwner={updateGameOwner}
+            />
+          }
+        />
       </Routes>
     </Router>
   );

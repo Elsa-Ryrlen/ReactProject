@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-function GamePage({ tasks, owners }) {
+function GamePage({ tasks, owners, updateGameOwner }) {
   const { gameId } = useParams();
   const game = tasks.find(task => task.id === gameId);
 
@@ -12,10 +12,26 @@ function GamePage({ tasks, owners }) {
   const owner = owners.find(owner => owner.id === game.ownerId);
   const ownerName = owner ? owner.name : "Unknown";
 
+  const [buyerId, setBuyerId] = useState('');
+  const [buyerName, setBuyerName] = useState('');
+
   function handleSubmit(event) {
     event.preventDefault();
-
+    const buyerIdNumber = parseInt(buyerId, 10);
+    if (!isNaN(buyerIdNumber)) {
+      const confirmSale = window.confirm(
+        `Are you sure you want to sell "${game.name}" to buyer ID: ${buyerIdNumber}?`
+      );
+      if (confirmSale) {
+        updateGameOwner(game.id, buyerIdNumber);
+        alert(`Game sold to buyer ID: ${buyerIdNumber}`);
+        setBuyerId(""); // Clear the input after the sale
+      }
+    } else {
+      alert("Please enter a valid Buyer ID.");
+    }
   }
+
 
   return (
     <div style={styles.container}>
@@ -27,23 +43,17 @@ function GamePage({ tasks, owners }) {
       )}
 
       <form onSubmit={handleSubmit} style={styles.form}>
-        <p style={styles.formText}>Add new information below:</p>
+        <p style={styles.formText}>Add buyer:</p>
         <input
           type="text"
           placeholder="Buyer ID"
           style={styles.input}
-        />
-        <input
-          type="text"
-          placeholder="Buyer Name"
-          style={styles.input}
+          value={buyerId}
+          onChange={(e) => setBuyerId(e.target.value)}
         />
         <button
           type="submit"
           style={styles.button}
-          onClick={() => alert('Are you sure?')}
-          onMouseEnter={(e) => (e.target.style.backgroundColor = '#0056b3')}
-          onMouseLeave={(e) => (e.target.style.backgroundColor = '#007bff')}
         >
           Sell Game
         </button>
@@ -52,7 +62,7 @@ function GamePage({ tasks, owners }) {
   );
 }
 
-
+// Styles object (unchanged)
 const styles = {
   container: {
     margin: '20px auto',
@@ -103,24 +113,6 @@ const styles = {
     fontWeight: 'bold',
     transition: 'background-color 0.3s ease',
   },
-  errorText: {
-    color: '#d9534f',
-    textAlign: 'center',
-    margin: '20px 0',
-    fontSize: '18px',
-  },
 };
-
-const buttonStyle = {
-    padding: '10px 20px',
-            backgroundColor: '#007bff',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer',
-            fontSize: '16px',
-            fontWeight: 'bold',
-            transition: 'background-color 0.3s ease'
-  };
 
 export default GamePage;
