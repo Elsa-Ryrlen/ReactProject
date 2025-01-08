@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 function GamePage({ tasks, owners, updateGameOwner }) {
   const { gameId } = useParams();
   const game = tasks.find(task => task.id === gameId);
+  const navigate = useNavigate();
 
   if (!game) {
     return <p>Game not found</p>;
@@ -35,6 +36,9 @@ function GamePage({ tasks, owners, updateGameOwner }) {
 
   return (
     <div style={styles.container}>
+       <button onClick={() => navigate(-1)} style={styles.backButton}>
+        Go Back
+      </button>
       <h2 style={styles.title}>{game.name}</h2>
       <p style={styles.infoText}>Price: <strong>{game.price}€</strong></p>
       <p style={styles.infoText}>Owner: <strong>{ownerName}</strong></p>

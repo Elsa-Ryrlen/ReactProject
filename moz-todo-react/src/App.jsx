@@ -1,6 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Form from "./components/Form";
-import FilterButton from "./components/FilterButton";
 import Todo from "./components/Todo";
 import GamePage from "./components/GamePage"; 
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
@@ -8,8 +7,29 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 function App({ tasks, owners }) {
   const [games, setGames] = useState(tasks);
-  const [gameOwners, setGameOwners] = useState(owners);
+  const [gameOwners, setGameOwners] = useState([]); // Use an empty array as initial state
 
+  useEffect(() => {
+    fetch("http://localhost:5000/api")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log("Fetched data:", data);
+        // Directly set the array of users as the state
+        setGameOwners(data);
+      })
+      .catch((error) => {
+        console.error("Error fetching the data:", error);
+      });
+}, []);
+
+  
+  
+  
 
   // Function to add a new game to the list
   function addGame(newGame) {
@@ -61,22 +81,33 @@ function App({ tasks, owners }) {
 
   return (
     <Router>
-      <div className="todoapp stack-large">
-        <h1>Game Festival</h1>
-        <Form onSubmit={addGame} />
-        <div className="filters btn-group stack-exception">
-          <FilterButton />
-          <FilterButton />
-        </div>
-        <h2 id="list-heading">{games.length} games available</h2>
-        <ul
-          role="list"
-          className="todo-list stack-large stack-exception"
-          aria-labelledby="list-heading">
-          {taskList}
-        </ul>
-      </div>
       <Routes>
+      <Route
+          path="/"
+          element={
+            <div className="todoapp stack-large">
+              <h1>Game Festival</h1>
+              <Form onSubmit={addGame} />
+              <h2 id="list-heading">{games.length} games available</h2>
+              <ul
+                role="list"
+                className="todo-list stack-large stack-exception"
+                aria-labelledby="list-heading">
+                {games.map((game) => (
+                  <Todo
+                    id={game.id}
+                    name={game.name}
+                    price={game.price}
+                    completed={game.completed}
+                    key={game.id}
+                    ownerName={getOwnerName(game.ownerId)}
+                    handleDelete={handleDelete}
+                  />
+                ))}
+              </ul>
+            </div>
+          }
+        />
         <Route
           path="/game/:gameId"
           element={
